@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  div #{users}
+  form(action="/users/post" method="post")
+    p
+      input(type="text" name="str")
+      input(type="submit" value="Отправить")
