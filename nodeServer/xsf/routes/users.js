@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var util = require('util');
+var debug = require('debug')('http');
 /* GET users listing. */
 var User = require('../models');
-
+var fs = require('fs');
 
 router.get('/', function(req, res, next) {
 	User.find(function (err, users) {
@@ -22,8 +23,31 @@ router.get('/user/', function(req, res, next) {
 	}
 });
 
+
+/* 
+$.get('users/get_level/?level=8', function(data, resp) {
+debugger
+})
+ */
+router.get('/get_level/', function(req, res, next) {
+	if(req.query.level){
+		fs.readFile('levels/l_'+req.query.level+'.json', function (err,data) {
+		  if (err) {
+			return console.log(err);
+		  }
+		  res.send(data);
+		});
+	}
+});
+
+/* 
+$.get('users/user_save/?id=8', function(data, resp) {
+debugger
+})
+ */
 router.get('/user_save/', function(req, res, next) {
 	if(req.query.id){
+	debug('doing some work');
 		var user = new User({ 
 			name: 'NEW', 
 			_id: req.query.id,
@@ -42,6 +66,36 @@ router.get('/user_save/', function(req, res, next) {
 			   res.json(users);//util.inspect(req)
 			})
 		});
+	}
+});
+
+/* 
+$.get('users/user_profile/?id=8', function(data, resp) {
+debugger
+})
+ */
+router.get('/user_profile/', function(req, res, next) {
+	if(req.query.id){
+		User.findOne({ _id: req.query.id },function (err, user) { 
+				res.send(user);
+		})
+	}
+});
+
+
+/* 
+$.get('users/user_save_settings/?id=8', function(data, resp) {
+debugger
+})
+ */
+router.get('/user_save_settings/', function(req, res, next) {
+	if(req.query.id && req.query.settings){
+		var query = { _id: req.query.id };
+		User.findOneAndUpdate(query, {name:req.query.settings}, function(err,model){
+			User.findOne({ _id: req.query.id },function (err, user) { 
+					res.send(user);
+			})
+		})
 	}
 });
 
