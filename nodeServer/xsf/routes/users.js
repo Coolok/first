@@ -39,6 +39,20 @@ router.get('/get_level/', function(req, res, next) {
 		});
 	}
 });
+/* 
+$.post('users/save_level/?level=8', function(data, resp) {
+debugger
+})
+ */
+router.post('/save_level/', function(req, res, next) {
+	if(req.query.level && req.body){
+		fs.writeFile('levels/l_'+req.query.level+'.json', JSON.stringify(req.body), function (err) {
+		  if (err) return console.log(err);
+		  console.log('l_'+req.query.level+'.json saved');
+		});
+
+	}
+});
 
 /* 
 $.get('users/user_save/?id=8', function(data, resp) {
@@ -84,11 +98,27 @@ router.get('/user_profile/', function(req, res, next) {
 
 
 /* 
-$.get('users/user_save_settings/?id=8', function(data, resp) {
+$.get('users/user_save_settings/?id=333&settings=old', function(data, resp) {
 debugger
 })
  */
 router.get('/user_save_settings/', function(req, res, next) {
+	if(req.query.id && req.query.settings){
+		var query = { _id: req.query.id };
+		User.findOneAndUpdate(query, {name:req.query.settings}, function(err,model){
+			User.findOne({ _id: req.query.id },function (err, user) { 
+					res.send(user);
+			})
+		})
+	}
+});
+
+/* 
+$.get('users/user_save_attr/?id=333&settings=old&progress=555', function(data, resp) {
+debugger
+})
+ */
+router.get('/user_save_attr/', function(req, res, next) {
 	if(req.query.id && req.query.settings){
 		var query = { _id: req.query.id };
 		User.findOneAndUpdate(query, {name:req.query.settings}, function(err,model){
