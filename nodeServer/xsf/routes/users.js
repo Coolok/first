@@ -16,6 +16,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/user/', function(req, res, next) {
+
 	if(req.query.id){
 		User.findOne({ _id: req.query.id },function (err, user) { 
 				res.send(user);
@@ -87,8 +88,44 @@ router.get('/user_save/', function(req, res, next) {
 $.get('users/user_profile/?id=8', function(data, resp) {
 debugger
 })
+
+$.get('users/user_profile/?q_range=1&q_name=prigress&q_gt=1&q_lt=22 ', function(data, resp) {
+debugger
+})
+
+$.get('users/user_profile/?q_param=1&q_name=name&q_val=Silence', function(data, resp) {
+debugger
+})
  */
+ 
 router.get('/user_profile/', function(req, res, next) {
+	debugger
+	if(
+		req.query.q_range &&
+		req.query.q_name && 
+		req.query.q_gt && 
+		req.query.q_lt 
+		){
+		User.where(req.query.q_name).gte(req.query.q_gt).lte(req.query.q_lt).exec(function (err, user) {
+			debugger
+			if (err) return console.error(err);
+			res.send(user);
+		});
+	}
+	if(
+		req.query.q_param &&
+		req.query.q_name && 
+		req.query.q_val
+		){
+		var name = req.query.q_name;
+		var _query = {};
+		_query[name] = req.query.q_val;
+		User.findOne(_query, function (err, user) {
+			debugger
+			if (err) return console.error(err);
+			res.send(user);
+		});
+	}
 	if(req.query.id){
 		User.findOne({ _id: req.query.id },function (err, user) { 
 				res.send(user);
